@@ -59,35 +59,36 @@ class TopLastTextTools extends StatelessWidget {
               ),
 
               /// background color button per testo obbligatorio
-              ToolButton(
-                onTap: () {
-                  // Toggle background color selection
-                  editorNotifier.isBackgroundColorSelection =
-                      !editorNotifier.isBackgroundColorSelection;
-                },
-                child: Transform.scale(
-                    scale: 0.8,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color:
-                            editorNotifier.backGroundColor != Colors.transparent
-                                ? editorNotifier.backGroundColor
-                                : Colors.grey.withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(
-                            color: editorNotifier.isBackgroundColorSelection
-                                ? Colors.white
-                                : Colors.transparent,
-                            width: 1.5),
-                      ),
-                      padding: const EdgeInsets.all(6),
-                      child: const Icon(
-                        Icons.format_color_fill,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                    )),
-              ),
+              if (false)
+                ToolButton(
+                  onTap: () {
+                    // Toggle background color selection
+                    editorNotifier.isBackgroundColorSelection =
+                        !editorNotifier.isBackgroundColorSelection;
+                  },
+                  child: Transform.scale(
+                      scale: 0.8,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: editorNotifier.backGroundColor !=
+                                  Colors.transparent
+                              ? editorNotifier.backGroundColor
+                              : Colors.grey.withOpacity(0.8),
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                              color: editorNotifier.isBackgroundColorSelection
+                                  ? Colors.white
+                                  : Colors.transparent,
+                              width: 1.5),
+                        ),
+                        padding: const EdgeInsets.all(6),
+                        child: const Icon(
+                          Icons.format_color_fill,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      )),
+                ),
 
               const Spacer(),
 
