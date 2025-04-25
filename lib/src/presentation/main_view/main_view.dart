@@ -152,9 +152,11 @@ class _MainViewState extends State<MainView> {
           position: const Offset(0.0, 0.0),
           isMandatory: true,
         );
-        textItem.text = "La tua Last";
+        textItem.text = "Il tuo Last";
         textItem.textColor = Colors.white;
-        textItem.backGroundColor = widget.textBackgroundColor ?? Colors.pink;
+        textItem.backGroundColor = Colors.pink;
+        textItem.fontSize = 30;
+        textItem.fontFamily = 1;
         itemProvider.editableItems.add(textItem);
 
         // Aggiungi il widget di localizzazione obbligatorio (se c'è il geoPoint)
@@ -165,6 +167,7 @@ class _MainViewState extends State<MainView> {
             isMandatory: true,
           );
           locationItem.location = widget.location;
+          locationItem.scale = 1.5;
           itemProvider.editableItems.add(locationItem);
         }
       }

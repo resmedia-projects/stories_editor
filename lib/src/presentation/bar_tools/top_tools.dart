@@ -47,8 +47,7 @@ class _TopToolsState extends State<TopTools> {
                   backGroundColor: Colors.black12,
                   onTap: () async {
                     var res = await exitDialog(
-                        context: widget.context,
-                        contentKey: widget.contentKey);
+                        context: widget.context, contentKey: widget.contentKey);
                     if (res) {
                       Navigator.pop(context);
                     }
@@ -60,7 +59,8 @@ class _TopToolsState extends State<TopTools> {
                 ),
 
                 if (widget.canEdit) ...[
-                  if (controlNotifier.mediaPath.isEmpty)
+                  if (controlNotifier.mediaPath.isEmpty &&
+                      !controlNotifier.isLast)
                     _selectColor(
                       controlProvider: controlNotifier,
                       onTap: () {
@@ -136,7 +136,8 @@ class _TopToolsState extends State<TopTools> {
                   if (controlNotifier.isLast)
                     ToolButton(
                       backGroundColor: Colors.black12,
-                      onTap: () => _changeLastTextBackgroundColor(controlNotifier, itemNotifier),
+                      onTap: () => _changeLastTextBackgroundColor(
+                          controlNotifier, itemNotifier),
                       child: const Icon(
                         Icons.format_color_fill,
                         color: Colors.white,
@@ -153,16 +154,14 @@ class _TopToolsState extends State<TopTools> {
   }
 
   void _changeLastTextBackgroundColor(
-    ControlNotifier controlProvider, 
-    DraggableWidgetNotifier itemProvider
-  ) {
+      ControlNotifier controlProvider, DraggableWidgetNotifier itemProvider) {
     final mandatoryTextItems = itemProvider.editableItems
         .where((item) => item.isMandatory && item.type == ItemType.text)
         .toList();
-        
+
     if (mandatoryTextItems.isNotEmpty) {
       EditableItem textItem = mandatoryTextItems.first;
-      
+
       final backgroundColors = [
         Colors.pink,
         Colors.blue,
@@ -173,7 +172,7 @@ class _TopToolsState extends State<TopTools> {
         Colors.teal,
         Colors.black.withOpacity(0.7),
       ];
-      
+
       setState(() {
         int currentIndex = -1;
         for (int i = 0; i < backgroundColors.length; i++) {
@@ -182,17 +181,18 @@ class _TopToolsState extends State<TopTools> {
             break;
           }
         }
-        
+
         int nextIndex = (currentIndex + 1) % backgroundColors.length;
         textItem.backGroundColor = backgroundColors[nextIndex];
-        
+
         double luminance = textItem.backGroundColor.computeLuminance();
         textItem.textColor = luminance > 0.5 ? Colors.black : Colors.white;
       });
     }
   }
 
-  Widget _selectColor({required VoidCallback onTap, required ControlNotifier controlProvider}) {
+  Widget _selectColor(
+      {required VoidCallback onTap, required ControlNotifier controlProvider}) {
     return Padding(
       padding: const EdgeInsets.only(left: 5, right: 5, top: 8),
       child: AnimatedOnTapButton(

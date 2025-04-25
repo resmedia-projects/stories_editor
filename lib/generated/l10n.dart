@@ -18,20 +18,17 @@ class S {
   static S? _current;
 
   static S get current {
-    assert(
-      _current != null,
-      'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.',
-    );
+    assert(_current != null,
+        'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
     return _current!;
   }
 
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final name =
-        (locale.countryCode?.isEmpty ?? false)
-            ? locale.languageCode
-            : locale.toString();
+    final name = (locale.countryCode?.isEmpty ?? false)
+        ? locale.languageCode
+        : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -44,10 +41,8 @@ class S {
 
   static S of(BuildContext context) {
     final instance = S.maybeOf(context);
-    assert(
-      instance != null,
-      'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?',
-    );
+    assert(instance != null,
+        'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?');
     return instance!;
   }
 
@@ -77,7 +72,12 @@ class S {
 
   /// `Annulla`
   String get discard {
-    return Intl.message('Annulla', name: 'discard', desc: '', args: []);
+    return Intl.message(
+      'Annulla',
+      name: 'discard',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Salvato con successo`
@@ -92,7 +92,12 @@ class S {
 
   /// `Errore`
   String get error {
-    return Intl.message('Errore', name: 'error', desc: '', args: []);
+    return Intl.message(
+      'Errore',
+      name: 'error',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Nulla da salvare`
@@ -107,17 +112,32 @@ class S {
 
   /// `Salva bozza`
   String get saveDraft {
-    return Intl.message('Salva bozza', name: 'saveDraft', desc: '', args: []);
+    return Intl.message(
+      'Salva bozza',
+      name: 'saveDraft',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Cancella`
   String get cancel {
-    return Intl.message('Cancella', name: 'cancel', desc: '', args: []);
+    return Intl.message(
+      'Cancella',
+      name: 'cancel',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Fatto`
   String get done {
-    return Intl.message('Fatto', name: 'done', desc: '', args: []);
+    return Intl.message(
+      'Fatto',
+      name: 'done',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Toccare per digitare`

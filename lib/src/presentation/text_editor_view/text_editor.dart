@@ -20,8 +20,8 @@ class TextEditor extends StatefulWidget {
   final bool isMandatory;
 
   const TextEditor({
-    Key? key, 
-    required this.context, 
+    Key? key,
+    required this.context,
     this.isMandatory = false,
   }) : super(key: key);
 
@@ -39,7 +39,8 @@ class _TextEditorState extends State<TextEditor> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      final editorNotifier = Provider.of<TextEditingNotifier>(widget.context, listen: false);
+      final editorNotifier =
+          Provider.of<TextEditingNotifier>(widget.context, listen: false);
       editorNotifier
         ..textController.text = editorNotifier.text
         ..fontFamilyController = PageController(viewportFraction: .125);
@@ -54,7 +55,11 @@ class _TextEditorState extends State<TextEditor> with WidgetsBindingObserver {
   void didChangeMetrics() {
     WidgetsBinding.instance.addPostFrameCallback((final Duration timeStamp) {
       setState(() {
-        bottomInset = EdgeInsets.fromWindowPadding(WidgetsBinding.instance.window.viewInsets, WidgetsBinding.instance.window.devicePixelRatio).bottom - 45.0;
+        bottomInset = EdgeInsets.fromWindowPadding(
+                    WidgetsBinding.instance.window.viewInsets,
+                    WidgetsBinding.instance.window.devicePixelRatio)
+                .bottom -
+            45.0;
       });
     });
   }
@@ -73,7 +78,8 @@ class _TextEditorState extends State<TextEditor> with WidgetsBindingObserver {
                 /// onTap => Close view and create/modify item object
                 onTap: () => _onTap(context, controlNotifier, editorNotifier),
                 child: Container(
-                    decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
+                    decoration:
+                        BoxDecoration(color: Colors.black.withOpacity(0.5)),
                     height: screenUtil.screenHeight,
                     width: screenUtil.screenWidth,
                     child: Stack(
@@ -85,9 +91,12 @@ class _TextEditorState extends State<TextEditor> with WidgetsBindingObserver {
                         ),
 
                         /// text size
-                        const Align(
-                          alignment: Alignment.centerLeft,
-                          child: SizeSliderWidget(),
+                        Visibility(
+                          visible: !widget.isMandatory,
+                          child: const Align(
+                            alignment: Alignment.centerLeft,
+                            child: SizeSliderWidget(),
+                          ),
                         ),
 
                         /// top tools - choose between regular or mandatory text tools
@@ -96,10 +105,12 @@ class _TextEditorState extends State<TextEditor> with WidgetsBindingObserver {
                               alignment: Alignment.topCenter,
                               child: widget.isMandatory
                                   ? TopLastTextTools(
-                                      onDone: () => _onTap(context, controlNotifier, editorNotifier),
+                                      onDone: () => _onTap(context,
+                                          controlNotifier, editorNotifier),
                                     )
                                   : TopTextTools(
-                                      onDone: () => _onTap(context, controlNotifier, editorNotifier),
+                                      onDone: () => _onTap(context,
+                                          controlNotifier, editorNotifier),
                                     )),
                         ),
 
@@ -107,7 +118,8 @@ class _TextEditorState extends State<TextEditor> with WidgetsBindingObserver {
                         Positioned(
                           bottom: bottomInset,
                           child: Visibility(
-                            visible: editorNotifier.isFontFamily,
+                            visible: editorNotifier.isFontFamily &&
+                                !widget.isMandatory,
                             child: const Align(
                               alignment: Alignment.bottomCenter,
                               child: Padding(
@@ -122,7 +134,9 @@ class _TextEditorState extends State<TextEditor> with WidgetsBindingObserver {
                         Positioned(
                           bottom: bottomInset,
                           child: Visibility(
-                              visible: !editorNotifier.isFontFamily && !editorNotifier.isTextAnimation && !editorNotifier.isBackgroundColorSelection && !widget.isMandatory,
+                              visible: !editorNotifier.isFontFamily &&
+                                  !editorNotifier.isTextAnimation &&
+                                  !editorNotifier.isBackgroundColorSelection,
                               child: const Align(
                                 alignment: Alignment.bottomCenter,
                                 child: Padding(
@@ -136,7 +150,9 @@ class _TextEditorState extends State<TextEditor> with WidgetsBindingObserver {
                         Positioned(
                           bottom: bottomInset,
                           child: Visibility(
-                              visible: editorNotifier.isBackgroundColorSelection && widget.isMandatory,
+                              visible:
+                                  editorNotifier.isBackgroundColorSelection &&
+                                      widget.isMandatory,
                               child: const Align(
                                 alignment: Alignment.bottomCenter,
                                 child: Padding(
@@ -150,7 +166,8 @@ class _TextEditorState extends State<TextEditor> with WidgetsBindingObserver {
                         Positioned(
                           bottom: bottomInset,
                           child: Visibility(
-                              visible: editorNotifier.isTextAnimation && !widget.isMandatory,
+                              visible: editorNotifier.isTextAnimation &&
+                                  !widget.isMandatory,
                               child: const Align(
                                 alignment: Alignment.bottomCenter,
                                 child: Padding(
@@ -167,8 +184,10 @@ class _TextEditorState extends State<TextEditor> with WidgetsBindingObserver {
         ));
   }
 
-  void _onTap(context, ControlNotifier controlNotifier, TextEditingNotifier editorNotifier) {
-    final editableItemNotifier = Provider.of<DraggableWidgetNotifier>(context, listen: false);
+  void _onTap(context, ControlNotifier controlNotifier,
+      TextEditingNotifier editorNotifier) {
+    final editableItemNotifier =
+        Provider.of<DraggableWidgetNotifier>(context, listen: false);
 
     // Per i testi obbligatori, se il campo è vuoto impostiamo un testo di default
     if (widget.isMandatory && editorNotifier.text.trim().isEmpty) {
@@ -192,28 +211,35 @@ class _TextEditorState extends State<TextEditor> with WidgetsBindingObserver {
 
       /// create Text Item with different settings for regular vs mandatory text
       editableItemNotifier.editableItems.add(EditableItem(
-          type: ItemType.text, 
+          type: ItemType.text,
           position: const Offset(0.0, 0.0),
           isMandatory: widget.isMandatory)
         ..text = editorNotifier.text.trim()
         ..backGroundColor = editorNotifier.backGroundColor
-        ..textColor = widget.isMandatory 
-            ? editorNotifier.getTextColorForBackground() // Colore automatico per testi obbligatori
-            : controlNotifier.colorList![editorNotifier.textColor] // Colore scelto per testi normali
+        ..textColor = widget.isMandatory
+            ? editorNotifier
+                .getTextColorForBackground() // Colore automatico per testi obbligatori
+            : controlNotifier.colorList![
+                editorNotifier.textColor] // Colore scelto per testi normali
         ..fontFamily = editorNotifier.fontFamilyIndex
         ..fontSize = editorNotifier.textSize
-        ..fontAnimationIndex = widget.isMandatory ? 0 : editorNotifier.fontAnimationIndex // Nessuna animazione per testi obbligatori
+        ..fontAnimationIndex = widget.isMandatory
+            ? 0
+            : editorNotifier
+                .fontAnimationIndex // Nessuna animazione per testi obbligatori
         ..textAlign = editorNotifier.textAlign
         ..textList = editorNotifier.textList
-        ..animationType = widget.isMandatory ? TextAnimationType.none : editorNotifier.animationList[editorNotifier.fontAnimationIndex]);
-      
+        ..animationType = widget.isMandatory
+            ? TextAnimationType.none
+            : editorNotifier.animationList[editorNotifier.fontAnimationIndex]);
+
       editorNotifier.setDefaults();
       controlNotifier.isTextEditing = !controlNotifier.isTextEditing;
     } else if (widget.isMandatory) {
       // Se il testo è obbligatorio e il campo è vuoto, aggiungiamo comunque il testo di default
       editorNotifier.text = "La tua last";
       editorNotifier.textController.text = "La tua last";
-      
+
       // Richiama ricorsivamente il metodo per creare l'elemento con il testo di default
       _onTap(context, controlNotifier, editorNotifier);
     } else {

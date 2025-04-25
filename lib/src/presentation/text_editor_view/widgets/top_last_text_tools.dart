@@ -21,18 +21,19 @@ class TopLastTextTools extends StatelessWidget {
               ToolButton(
                 onTap: () {
                   editorNotifier.isFontFamily = !editorNotifier.isFontFamily;
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                  /* WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (editorNotifier.fontFamilyController.hasClients) {
                       editorNotifier.fontFamilyController
                           .animateToPage(editorNotifier.fontFamilyIndex, duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
                     }
-                  });
+                  }); */
                 },
                 child: Transform.scale(
                     scale: !editorNotifier.isFontFamily ? 0.8 : 1.3,
                     child: !editorNotifier.isFontFamily
                         ? const ImageIcon(
-                            AssetImage('assets/icons/text.png', package: 'stories_editor'),
+                            AssetImage('assets/icons/text.png',
+                                package: 'stories_editor'),
                             size: 20,
                             color: Colors.white,
                           )
@@ -61,17 +62,23 @@ class TopLastTextTools extends StatelessWidget {
               ToolButton(
                 onTap: () {
                   // Toggle background color selection
-                  editorNotifier.isBackgroundColorSelection = !editorNotifier.isBackgroundColorSelection;
+                  editorNotifier.isBackgroundColorSelection =
+                      !editorNotifier.isBackgroundColorSelection;
                 },
                 child: Transform.scale(
                     scale: 0.8,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: editorNotifier.backGroundColor != Colors.transparent 
-                            ? editorNotifier.backGroundColor 
-                            : Colors.grey.withOpacity(0.8),
+                        color:
+                            editorNotifier.backGroundColor != Colors.transparent
+                                ? editorNotifier.backGroundColor
+                                : Colors.grey.withOpacity(0.8),
                         borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: editorNotifier.isBackgroundColorSelection ? Colors.white : Colors.transparent, width: 1.5),
+                        border: Border.all(
+                            color: editorNotifier.isBackgroundColorSelection
+                                ? Colors.white
+                                : Colors.transparent,
+                            width: 1.5),
                       ),
                       padding: const EdgeInsets.all(6),
                       child: const Icon(
@@ -92,9 +99,12 @@ class TopLastTextTools extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 10, top: 10),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 6, horizontal: 12),
                       decoration: BoxDecoration(
-                          color: Colors.transparent, border: Border.all(color: Colors.white, width: 1.5), borderRadius: BorderRadius.circular(15)),
+                          color: Colors.transparent,
+                          border: Border.all(color: Colors.white, width: 1.5),
+                          borderRadius: BorderRadius.circular(15)),
                       child: Text(
                         S.of(context).done,
                         style: const TextStyle(
