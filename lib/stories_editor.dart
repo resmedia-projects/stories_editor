@@ -136,7 +136,11 @@ class _StoriesEditorState extends State<StoriesEditor> {
           designSize: const Size(1080, 1920),
           builder: (_, __) => MultiProvider(
             providers: [
-              ChangeNotifierProvider(create: (_) => ControlNotifier()),
+              ChangeNotifierProvider(create: (_) {
+                final controlNotifier = ControlNotifier();
+                controlNotifier.isLast = widget.isLast;
+                return controlNotifier;
+              }),
               ChangeNotifierProvider(create: (_) => ScrollNotifier()),
               ChangeNotifierProvider(create: (_) => DraggableWidgetNotifier()),
               ChangeNotifierProvider(create: (_) => GradientNotifier()),
