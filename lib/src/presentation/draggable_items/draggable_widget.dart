@@ -259,7 +259,9 @@ class DraggableWidget extends StatelessWidget {
       // ]
     ).copyWith(
         color: background ? Colors.black : draggableWidget.textColor,
-        fontSize: draggableWidget.deletePosition ? 8 : draggableWidget.fontSize,
+        fontSize: draggableWidget.isMandatory
+            ? draggableWidget.fontSize
+            : (draggableWidget.deletePosition ? 8 : draggableWidget.fontSize),
         background: Paint()
           ..strokeWidth = 20.0
           ..color = draggableWidget.backGroundColor
@@ -319,10 +321,10 @@ class DraggableWidget extends StatelessWidget {
     editorProvider.animationType = item.animationType;
     editorProvider.textList = item.textList;
     editorProvider.fontAnimationIndex = item.fontAnimationIndex;
-    
+
     // Imposta isLast in base al flag isMandatory dell'elemento
     controlNotifier.isLast = item.isMandatory;
-    
+
     itemProvider.editableItems
         .removeAt(itemProvider.editableItems.indexOf(item));
     editorProvider.fontFamilyController = PageController(
