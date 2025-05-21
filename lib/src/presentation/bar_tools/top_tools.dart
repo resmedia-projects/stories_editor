@@ -124,8 +124,10 @@ class _TopToolsState extends State<TopTools> {
                   ),
                   ToolButton(
                     backGroundColor: Colors.black12,
-                    onTap: () => controlNotifier.isTextEditing =
-                        !controlNotifier.isTextEditing,
+                    onTap: () {
+                      controlNotifier.isLast = false;
+                      controlNotifier.isTextEditing = !controlNotifier.isTextEditing;
+                    },
                     child: const ImageIcon(
                       AssetImage('assets/icons/text.png',
                           package: 'stories_editor'),
