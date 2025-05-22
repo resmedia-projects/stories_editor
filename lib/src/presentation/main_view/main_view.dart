@@ -219,14 +219,16 @@ class _MainViewState extends State<MainView> {
                             /// this container will contain all widgets(image/texts/draws/sticker)
                             /// wrap this widget with coloredFilter
                             GestureDetector(
-                              onScaleStart: _onScaleStart,
-                              onScaleUpdate: _onScaleUpdate,
                               onTap: () {
-                                if (canEdit(itemProvider.editableItems)) {
+                                if (!controlNotifier.isPainting &&
+                                    !controlNotifier.isTextEditing) {
+                                  controlNotifier.isLast = false;
                                   controlNotifier.isTextEditing =
                                       !controlNotifier.isTextEditing;
                                 }
                               },
+                              onScaleStart: _onScaleStart,
+                              onScaleUpdate: _onScaleUpdate,
                               child: Align(
                                 alignment: Alignment.topCenter,
                                 child: ClipRRect(
@@ -568,6 +570,14 @@ class _MainViewState extends State<MainView> {
 
   /// active delete widget with offset position
   void _deletePosition(EditableItem item, PointerMoveEvent details) {
+    // Non rimpicciolire o eliminare elementi obbligatori
+    if (item.isMandatory) {
+      setState(() {
+        _isDeletePosition = false;
+        item.deletePosition = false;
+      });
+      return;
+    }
     if (item.type == ItemType.text &&
         item.position.dy >= 0.75.h &&
         item.position.dx >= -0.4.w &&
