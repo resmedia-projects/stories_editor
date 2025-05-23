@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,6 +31,7 @@ import 'package:stories_editor/src/presentation/utils/constants/app_enums.dart';
 import 'package:stories_editor/src/presentation/utils/modal_sheets.dart';
 import 'package:stories_editor/src/presentation/widgets/animated_onTap_button.dart';
 import 'package:stories_editor/src/presentation/widgets/scrollable_pageView.dart';
+import 'package:video_player/video_player.dart';
 
 class MainView extends StatefulWidget {
   /// editor custom font families
@@ -79,6 +79,9 @@ class MainView extends StatefulWidget {
   /// Colore di sfondo per il testo obbligatorio quando isLast è true
   final Color? textBackgroundColor;
 
+  /// Durata minima video (null se non applicato)
+  final Duration? minVideoDuration;
+
   MainView({
     Key? key,
     required this.giphyKey,
@@ -95,6 +98,7 @@ class MainView extends StatefulWidget {
     required this.storyAspectRatio,
     this.isLast = false,
     this.location,
+    this.minVideoDuration,
     this.textBackgroundColor,
   }) : super(key: key);
 
@@ -434,42 +438,65 @@ class _MainViewState extends State<MainView> {
                   gridViewController: scrollProvider.gridController,
                   thumbnailQuality: widget.galleryThumbnailQuality,
                   singlePick: true,
-                  requestType: RequestType.common,
+                  requestType: widget.isLast
+                      ? RequestType.image
+                      : RequestType.common,
                   appBarColor: widget.editorBackgroundColor ?? Colors.black,
                   gridViewPhysics: itemProvider.editableItems.isEmpty
                       ? const NeverScrollableScrollPhysics()
                       : const ScrollPhysics(),
-                  pathList: (final List<PickedAssetModel> pickedAssets) {
-                    final PickedAssetModel pickedAsset = pickedAssets.single;
-
-                    final ItemType type;
+                  pathList: (final List<PickedAssetModel> pickedAssets) async {
+                    final pickedAsset = pickedAssets.single;
                     final String? mimeType = lookupMimeType(pickedAsset.path!);
                     if (mimeType == null) {
                       throw Exception(
-                          'Mime type for path: ${pickedAsset.path} is null');
+                          'Mime type per path: ${pickedAsset.path} è null');
                     }
-                    if (mimeType.startsWith("image")) {
+                    late final ItemType type;
+                    if (mimeType.startsWith('image')) {
                       type = ItemType.image;
-                    } else if (mimeType.startsWith("video")) {
+                    } else if (mimeType.startsWith('video')) {
                       type = ItemType.video;
+                      // Non permettere video in modalità isLast
+                      if (widget.isLast) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text("Non puoi caricare video nell'ultimo story")),
+                        );
+                        return;
+                      }
+                      // Filtro durata minima
+                      if (widget.minVideoDuration != null) {
+                        final controller =
+                            VideoPlayerController.file(File(pickedAsset.path!));
+                        await controller.initialize();
+                        final duration = controller.value.duration;
+                        await controller.dispose();
+                        if (duration < widget.minVideoDuration!) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                    "Il video deve durare almeno ${widget.minVideoDuration!.inSeconds} secondi")),
+                          );
+                          return;
+                        }
+                      }
                     } else {
                       throw Exception(
-                          'Mime type $mimeType for path: ${pickedAsset.path} is not supported');
+                          'Mime type $mimeType per path: ${pickedAsset.path} non supportato');
                     }
-
-                    controlNotifier.mediaPath = pickedAsset.path!.toString();
+                    controlNotifier.mediaPath = pickedAsset.path!;
                     if (controlNotifier.mediaPath.isNotEmpty) {
                       itemProvider.editableItems.insert(
                         0,
-                        EditableItem(
-                          type: type,
-                          position: const Offset(0.0, 0),
-                        ),
+                        EditableItem(type: type, position: const Offset(0.0, 0)),
                       );
                     }
-                    scrollProvider.pageController.animateToPage(0,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeIn);
+                    scrollProvider.pageController.animateToPage(
+                      0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeIn,
+                    );
                   },
                   appBarLeadingWidget: Padding(
                     padding: const EdgeInsets.only(bottom: 15, right: 15),
@@ -477,9 +504,11 @@ class _MainViewState extends State<MainView> {
                       alignment: Alignment.bottomRight,
                       child: AnimatedOnTapButton(
                         onTap: () {
-                          scrollProvider.pageController.animateToPage(0,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeIn);
+                          scrollProvider.pageController.animateToPage(
+                            0,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeIn,
+                          );
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
