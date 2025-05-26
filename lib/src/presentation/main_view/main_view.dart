@@ -82,6 +82,9 @@ class MainView extends StatefulWidget {
   /// Durata minima video (null se non applicato)
   final Duration? minVideoDuration;
 
+  /// Durata massima video (null se non applicato)
+  final Duration? maxVideoDuration;
+
   MainView({
     Key? key,
     required this.giphyKey,
@@ -99,6 +102,7 @@ class MainView extends StatefulWidget {
     this.isLast = false,
     this.location,
     this.minVideoDuration,
+    this.maxVideoDuration,
     this.textBackgroundColor,
   }) : super(key: key);
 
@@ -465,18 +469,29 @@ class _MainViewState extends State<MainView> {
                         );
                         return;
                       }
-                      // Filtro durata minima
-                      if (widget.minVideoDuration != null) {
+                      // Filtro durata minima e massima
+                      if (widget.minVideoDuration != null ||
+                          widget.maxVideoDuration != null) {
                         final controller =
                             VideoPlayerController.file(File(pickedAsset.path!));
                         await controller.initialize();
                         final duration = controller.value.duration;
                         await controller.dispose();
-                        if (duration < widget.minVideoDuration!) {
+                        if (widget.minVideoDuration != null &&
+                            duration < widget.minVideoDuration!) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                                 content: Text(
                                     "Il video deve durare almeno ${widget.minVideoDuration!.inSeconds} secondi")),
+                          );
+                          return;
+                        }
+                        if (widget.maxVideoDuration != null &&
+                            duration > widget.maxVideoDuration!) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(
+                                    "Il video deve durare massimo ${widget.maxVideoDuration!.inSeconds} secondi")),
                           );
                           return;
                         }

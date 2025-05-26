@@ -73,6 +73,9 @@ class StoriesEditor extends StatefulWidget {
   /// Durata minima video (null se non applicato)
   final Duration? minVideoDuration;
 
+  /// Durata massima video (null se non applicato)
+  final Duration? maxVideoDuration;
+
   const StoriesEditor({
     Key? key,
     required this.giphyKey,
@@ -92,6 +95,7 @@ class StoriesEditor extends StatefulWidget {
     this.geoPoint,
     this.textBackgroundColor = Colors.black54,
     this.minVideoDuration,
+    this.maxVideoDuration,
   }) : assert(!isLast || geoPoint != null, 'geoPoint è obbligatorio quando isLast è true'),
        super(key: key);
 
@@ -166,6 +170,7 @@ class _StoriesEditorState extends State<StoriesEditor> {
               storyAspectRatio: widget.storyAspectRatio,
               isLast: widget.isLast,
               minVideoDuration: widget.minVideoDuration,
+              maxVideoDuration: widget.maxVideoDuration,
               location: widget.isLast ? widget.geoPoint : null,
               textBackgroundColor: widget.textBackgroundColor,
             ),
